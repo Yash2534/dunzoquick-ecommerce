@@ -1,0 +1,9 @@
+To: Yashandrapiya1@gmail.com
+Subject: Your Password Reset OTP
+From: DUNZO Support <noreply@dunzo.com>
+
+
+                <h3>Your OTP:</h3>
+                <h1>936698</h1>
+                <p>Use this OTP to reset your password.</p>
+            

@@ -1,0 +1,8 @@
+To: mnngajjarashokbhai@gmail.com
+Subject: Your DUNZO Password Reset OTP
+From: DUNZO Support <noreply@dunzo.com>
+Reply-To: support@dunzo.com
+Date: Mon, 22 Sep 2025 11:08:41 +0200
+Content-Type: text/html; charset=UTF-8
+
+<h2>Your OTP for DUNZO Password Reset</h2><p>Use the following OTP to reset your password:</p><div style="font-size:2em;letter-spacing:8px;font-weight:bold;color:#28a745;">259936</div><p>This OTP is valid for 10 minutes.</p><p>If you did not request this, please ignore this email.</p>

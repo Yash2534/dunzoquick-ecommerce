@@ -1,0 +1,14 @@
+{
+    "name": "dunzo/project",
+    "description": "Dunzo e-commerce project",
+    "type": "project",
+    "require": {
+        "razorpay/razorpay": "^2.9",
+        "dompdf/dompdf": "^2.0"
+    },
+    "authors": [
+        {
+            "name": "Yash Andrapiya"
+        }
+    ]
+}
