@@ -5,12 +5,12 @@ DunzoQuick is a hyperlocal quick commerce web application inspired by Dunzo, ena
 # DUNZO
 
 ## Project Overview
-**DUNZO** is a comprehensive PHP-based web application designed to handle secure payment processing, dynamic document generation, and user authentication. This project demonstrates a modular architecture suitable for e-commerce platforms or enterprise resource planning (ERP) modules.
+**DUNZO** is a comprehensive PHP-based web application designed to handle secure payment processing, dynamic document generation, and user authentication. This project demonstrates a modular architecture suitable for Quick-commerce platforms or enterprise resource planning (ERP) modules.
 
 ## Key Features
 
 ### 💳 Payment Processing
-Integrated with **Razorpay** (v2.9.2) to handle secure online transactions. The system supports payment capture, verification, and logging, making it ready for e-commerce workflows.
+Integrated with **Razorpay** (v2.9.2) to handle secure online transactions. The system supports payment capture, verification, and logging, making it ready for Quick-commerce workflows.
 
 ### 📄 Advanced PDF Generation
 The application employs a dual-strategy for PDF creation to handle various complexity levels:
@@ -23,7 +23,7 @@ Includes a secure user management system with:
 *   Password Reset functionality (`reset_password.php`).
 *   Secure token handling.
 
-### 🛠 Development Utilities
+### � Development Utilities
 *   **Local Email Logging:** Outgoing emails (like password resets) are captured in `email_logs/` during development to prevent spamming real addresses.
 
 ## Technology Stack

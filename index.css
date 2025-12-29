@@ -1157,7 +1157,6 @@ body {
   background-color: #0c8056;
 }
 
-/* ===== Responsive Tweaks ===== */
 @media (max-width: 768px) {
   .hero-text h1 {
     font-size: 2rem;
