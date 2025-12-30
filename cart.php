@@ -1,5 +1,4 @@
 <?php
-// filepath: c:\xampp\htdocs\DUNZO\cart.php
 session_start();
 include 'config.php';
 
@@ -11,19 +10,22 @@ function get_image_path($db_path) {
     if (empty(trim((string)$db_path))) {
         return $default_image;
     }
-    // 1. Clean up known incorrect prefixes
     $path = preg_replace('#^(\.\./|/DUNZO/|Product/)#', '', (string)$db_path);
     $path = ltrim($path, '/');
 
-    // 2. Based on your file structure `C:\xampp\htdocs\DUNZO\Image`, all images
-    // should be inside the 'Image' directory. This code ensures that.
-    // It prepends 'Image/' if it's missing.
-    // We also check for 'PICTURE/' for compatibility with older data.
     if (strpos($path, 'Image/') !== 0 && strpos($path, 'PICTURE/') !== 0) {
         $path = 'Image/' . $path;
     }
     
     return '/DUNZO/' . htmlspecialchars($path);
+}
+
+// Define shipping calculation if not already available
+if (!function_exists('calculate_shipping_charge')) {
+    function calculate_shipping_charge($total, $is_prime = false) {
+        if ($is_prime) return 0;
+        return ($total >= 500) ? 0 : 40;
+    }
 }
 
 // Ensure user logged in
@@ -76,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_qty'])) {
     $applied_coupon_ajax = $_SESSION['applied_coupon'] ?? null;
     $discount_ajax = $applied_coupon_ajax ? ($subtotal_ajax * ($applied_coupon_ajax['discount_percentage'] / 100)) : 0;
     $order_value_ajax = $subtotal_ajax - $discount_ajax;
-    $shipping_ajax = calculate_shipping_charge($order_value_ajax); // Pass correct prime status
+    $shipping_ajax = calculate_shipping_charge($order_value_ajax, $is_prime_member); // Pass correct prime status
     $tax_ajax = ($subtotal_ajax - $discount_ajax) * $tax_rate;
     $total_ajax = $subtotal_ajax - $discount_ajax + $shipping_ajax + $tax_ajax;
 
@@ -200,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply_coupon'])) {
 $applied_coupon = $_SESSION['applied_coupon'] ?? null;
 $discount = $applied_coupon ? ($subtotal * ($applied_coupon['discount_percentage'] / 100)) : 0;
 $order_value = $subtotal - $discount;
-$shipping = calculate_shipping_charge($order_value); // Pass correct prime status
+$shipping = calculate_shipping_charge($order_value, $is_prime_member); // Pass correct prime status
 $tax = ($subtotal - $discount) * $tax_rate;
 $total = $subtotal - $discount + $shipping + $tax;
 
@@ -730,6 +732,28 @@ body {
   bottom: 20px;
   right: 20px;
   z-index: 1056;
+  background: white;
+  padding: 15px 20px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 4px solid var(--primary);
+  animation: slideIn 0.3s ease forwards;
+}
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.toast.danger, .toast.error {
+  border-left-color: var(--danger);
+}
+.toast.danger i, .toast.error i {
+  color: var(--danger);
+}
+.toast.success i {
+  color: var(--success);
 }
 
 /* Loading spinner */
@@ -1101,7 +1125,7 @@ function updateQty(element, change, productId) {
         discountRow.style.display = 'none';
       }
     } else {
-      showToast('Error', data.message || 'Error updating quantity', 'danger');
+      showToast(data.message || 'Error updating quantity', 'danger');
     }
   })
   .catch(error => {
@@ -1135,7 +1159,7 @@ function removeItem(buttonElement, productId) {
     if (data.status === 'success') {
       location.reload();
     } else {
-      showToast('Error', data.message || 'Error removing item.', 'danger');
+      showToast(data.message || 'Error removing item.', 'danger');
       if (cartItem) { cartItem.style.opacity = '1'; }
     }
   })

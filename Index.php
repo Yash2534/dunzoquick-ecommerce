@@ -343,6 +343,26 @@ $location_updated = isset($_GET['location']) && $_GET['location'] === 'updated';
                 });
         }
 
+        function confirmLocation(lat, lng) {
+            // Update the location selector with current location
+            const locationSelector = document.querySelector('.location-selector span:last-child');
+            if (locationSelector) {
+                locationSelector.textContent = '📍 Current Location ▼';
+            }
+
+            // Close the popup
+            closeLocationPopup();
+
+            // Show success message
+            showNotification('Location updated successfully!', 'success');
+
+            // Store location in localStorage
+            localStorage.setItem('userLocation', JSON.stringify({
+                latitude: lat,
+                longitude: lng,
+                timestamp: new Date().getTime()
+            }));
+        }
 
         function showNotification(message, type) {
             // Create notification element

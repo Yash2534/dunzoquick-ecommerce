@@ -213,7 +213,15 @@ if ($count_result) {
             </div>
 
             <form action="orders.php" method="POST" id="bulk-action-form">
-               
+                <div class="bulk-actions">
+                    <select name="bulk_status" required>
+                        <option value="">Bulk Actions</option>
+                        <?php foreach ($statuses as $status): ?>
+                            <option value="<?= $status ?>"><?= ucfirst(str_replace('_', ' ', $status)) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <button type="submit" name="apply_bulk_action">Apply</button>
+                </div>
 
                 <div class="table-container">
                     <table class="data-table">

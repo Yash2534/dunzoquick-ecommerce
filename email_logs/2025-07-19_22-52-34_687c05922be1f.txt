@@ -1,0 +1,55 @@
+To: Yashandrapiya1@gmail.com
+Subject: DUNZO - Password Reset Request
+
+
+    <html>
+    <head>
+        <title>Password Reset - DUNZO</title>
+    </head>
+    <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+        <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
+            <div style='text-align: center; margin-bottom: 30px;'>
+                <h1 style='color: #28a745; margin: 0;'>
+                    <span style='color: #ffc107;'>dun</span><span style='color: #28a745;'>zo</span>
+                </h1>
+            </div>
+            
+            <div style='background: #f8f9fa; padding: 30px; border-radius: 10px; border-left: 4px solid #28a745;'>
+                <h2 style='color: #333; margin-top: 0;'>Password Reset Request</h2>
+                
+                <p>Hello Andrapiya Yash,</p>
+                
+                <p>We received a request to reset your password for your DUNZO account. If you didn't make this request, you can safely ignore this email.</p>
+                
+                <p>To reset your password, click the button below:</p>
+                
+                <div style='text-align: center; margin: 30px 0;'>
+                    <a href='http://localhost/DUNZO/reset_password.php?token=1fb6637fd9bcd29a8c9a3e1f043ec0ce951685df85b86fe5024f98cca5ff2196' style='background: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;'>
+                        Reset Password
+                    </a>
+                </div>
+                
+                <p><strong>Or copy and paste this link in your browser:</strong></p>
+                <p style='word-break: break-all; color: #666;'>http://localhost/DUNZO/reset_password.php?token=1fb6637fd9bcd29a8c9a3e1f043ec0ce951685df85b86fe5024f98cca5ff2196</p>
+                
+                <p><strong>Important:</strong></p>
+                <ul>
+                    <li>This link will expire in 1 hour</li>
+                    <li>If you didn't request this password reset, please ignore this email</li>
+                    <li>For security, this link can only be used once</li>
+                </ul>
+                
+                <p>If you have any questions, please contact our support team.</p>
+                
+                <p>Best regards,<br>
+                <strong>The DUNZO Team</strong></p>
+            </div>
+            
+            <div style='text-align: center; margin-top: 30px; color: #666; font-size: 12px;'>
+                <p>This email was sent to Yashandrapiya1@gmail.com</p>
+                <p>&copy; 2024 DUNZO Technologies Private Limited. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    

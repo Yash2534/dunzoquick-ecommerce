@@ -143,29 +143,11 @@ function escapeHTML($str)
         .timer-ring circle { transition: stroke-dashoffset 1s linear; }
         .ring-bg { fill: none; stroke: #ffe8cc; stroke-width: 4; }
         .ring-progress { fill: none; stroke: #ff9800; stroke-width: 4; stroke-linecap: round; }
-        .timer-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 700; font-size: 1rem; color: #e65100; } .back-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: #eee;
-            color: #333;
-            padding: 6px 14px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-
-.back-btn:hover {
-  background: #ddd;
-}
+        .timer-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 700; font-size: 1rem; color: #e65100; }
     </style>
 </head>
 <body>
-                 <a href="index.php" class="back-btn">&larr; Back to Home</a>
-
     <div class="main-container">
-
         <div class="order-status-card" id="orderStatusCard">
             <div id="success-view">
                 <div class="success-icon"><i class="fas fa-check-circle"></i></div>
