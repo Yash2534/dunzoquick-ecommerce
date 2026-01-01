@@ -1,5 +1,4 @@
 <?php
-// filepath: c:\xampp\htdocs\DUNZO\admin\analytics.php
 include 'auth_check.php';
 include 'db_connect.php';
 

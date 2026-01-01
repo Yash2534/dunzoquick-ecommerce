@@ -13,7 +13,6 @@ if ($admin_id > 0) {
     $stmt_admin->close();
 }
 
-// Helper function for avatars (from dashboard.php)
 function get_avatar($photo, $name) {
     if ($photo && file_exists('../' . $photo)) {
         return '../' . htmlspecialchars($photo);
@@ -23,7 +22,7 @@ function get_avatar($photo, $name) {
 
 $error_message = '';
 
-// --- Fetch categories from the database ---
+// --- Fetch categories from the database 
 $categories = [];
 $result = $conn->query("SELECT name FROM categories ORDER BY name ASC");
 if ($result) {
@@ -34,7 +33,7 @@ if ($result) {
     $error_message = "Could not fetch categories. Please ensure the 'categories' table exists.";
 }
 
-// --- Handle Form Submission (POST Request) ---
+// --- Handle Form Submission (POST Request) 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $price = (float)$_POST['price'];
@@ -197,7 +196,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex; flex-direction: column; border-right: 1px solid var(--border-color);
         }
         .sidebar .logo { font-size: 28px; font-weight: 700; padding: 10px; margin-bottom: 30px; }
-        .sidebar .logo .yellow { color: #febd69; }
+        .sidebar .logo .yellow 
+        { color: #febd69; }
         .sidebar .logo .green { color: #00a651; }
         .sidebar-menu { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
         .sidebar-menu li a {
@@ -206,7 +206,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 5px; transition: all 0.2s ease;
         }
         .sidebar-menu li a i { font-size: 18px; width: 20px; margin-right: 15px; text-align: center; }
-        .sidebar-menu li a.active, .sidebar-menu li a:hover { background-color: var(--primary-light); color: var(--primary); }
+        .sidebar-menu li a.active, .sidebar-menu li a:hover 
+        { background-color: var(--primary-light); color: var(--primary); }
         @keyframes fadeInDropdown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
