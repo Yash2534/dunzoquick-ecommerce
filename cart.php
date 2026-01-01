@@ -4,7 +4,6 @@ include 'config.php';
 
 
 $tax_rate = 0.09;
-// Helper function to generate a clean, root-relative image path
 function get_image_path($db_path) {
     $default_image = '/DUNZO/Image/no-image.png';
     if (empty(trim((string)$db_path))) {
@@ -20,7 +19,6 @@ function get_image_path($db_path) {
     return '/DUNZO/' . htmlspecialchars($path);
 }
 
-// Define shipping calculation if not already available
 if (!function_exists('calculate_shipping_charge')) {
     function calculate_shipping_charge($total, $is_prime = false) {
         if ($is_prime) return 0;
@@ -95,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_qty'])) {
     exit();
 }
 
-// Remove item (This action is handled via AJAX)
+// Remove item 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove'])) {
     $product_id = (int)$_POST['remove'];
     $stmt = $conn->prepare("DELETE FROM cart WHERE user_id=? AND product_id=?");
@@ -991,7 +989,6 @@ body {
   </div>
 </div>
 
-<!-- Coupons Modal -->
 <div class="modal fade" id="couponsModal" tabindex="-1" aria-labelledby="couponsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content" style="border-radius: var(--border-radius);">
