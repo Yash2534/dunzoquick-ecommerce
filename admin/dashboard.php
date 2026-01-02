@@ -715,6 +715,3 @@ function get_avatar($photo, $name)
 </body>
 
 </html>
-<?php
-
-?>
