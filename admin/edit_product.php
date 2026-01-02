@@ -2,7 +2,6 @@
 session_start();
 include '../config.php'; // Connect to the database
 
-// Helper function to generate a clean, root-relative image path.
 function get_image_path($db_path) {
     $default_image = '/DUNZO/Image/no-image.png';
     if (empty(trim((string)$db_path))) {
@@ -20,7 +19,6 @@ $product = null;
 $error_message = '';
 $success_message = '';
 
-// --- Handle Form Submission (POST Request) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
     $product_id = (int)$_POST['product_id'];
     $name = trim($_POST['name']);
@@ -65,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
             }
         }
 
-        // If no errors, update the database
         if (empty($error_message)) {
             $stmt = $conn->prepare("UPDATE products SET name = ?, price = ?, category = ?, sub_category = ?, description = ?, image = ?, stock = ?, stock_quantity = ?, unit = ? WHERE id = ?");
             $stmt->bind_param("sdssssiisi", $name, $price, $category, $sub_category, $description, $image_path, $stock, $stock_quantity, $unit, $product_id);
@@ -82,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
     }
 }
 
-// --- Fetch Product for Form (GET Request) ---
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $product_id = (int)$_GET['id'];
     
@@ -101,7 +97,6 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $error_message = "No product ID specified.";
 }
 
-// --- Fetch categories from the database ---
 $categories = [];
 $result_cats = $conn->query("SELECT name FROM categories ORDER BY name ASC");
 if ($result_cats) {

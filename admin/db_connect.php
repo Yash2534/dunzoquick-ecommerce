@@ -1,5 +1,4 @@
 <?php
-// Database connection for admin panel
 $host = 'localhost';
 $db   = 'dunzo_db';
 $user = 'root';
