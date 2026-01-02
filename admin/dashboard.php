@@ -2,7 +2,6 @@
 include 'auth_check.php';
 include 'db_connect.php';
 
-// Fetch current admin details for header
 $admin_id = $_SESSION['admin_id'] ?? 0;
 $current_admin = null;
 if ($admin_id > 0) {
@@ -19,7 +18,7 @@ if ($current_admin) {
 
 // --- DATA FETCHING ---
 
-// 1. Fetch Summary Statistics (Optimized)
+// 1. Fetch Summary Statistics 
 $stats = [
     'total_revenue' => 0,
     'revenue_this_month' => 0,
@@ -219,7 +218,7 @@ function get_avatar($photo, $name)
             gap: 25px;
         }
 
-        /* User Profile Dropdown */
+        
         .user-profile-dropdown {
             position: relative;
         }
@@ -353,7 +352,7 @@ function get_avatar($photo, $name)
                 grid-template-columns: repeat(3, 1fr);
             }
 
-            /* 3 columns on desktop */
+  
         }
 
         .summary-box {
@@ -429,13 +428,11 @@ function get_avatar($photo, $name)
         .data-panels {
             display: grid;
             grid-template-columns: 1fr;
-            /* Stack panels on smaller screens */
             gap: 25px;
         }
 
         @media (min-width: 992px) {
 
-            /* Two columns on larger screens */
             .data-panels {
                 grid-template-columns: 2fr 1fr;
             }
@@ -719,56 +716,5 @@ function get_avatar($photo, $name)
 
 </html>
 <?php
-/*
-================================================================================
- CODE EXPLANATION FOR BEGINNERS
-================================================================================
 
-This PHP script creates the main dashboard page for the admin panel. It shows
-a summary of the store's activity at a glance.
-
-Here's a step-by-step breakdown of how it works:
-
-1.  **Initial Setup and Security:**
-    - `include 'auth_check.php'`: This is the first and most important line. It runs a script
-      that checks if an admin is logged in. If not, it redirects them to the login page.
-    - `include 'db_connect.php'`: This connects the page to the database so we can fetch data.
-
-2.  **Fetching Admin's Info:**
-    - It gets the logged-in admin's ID from the session (`$_SESSION['admin_id']`).
-    - It runs a SQL query to get the admin's name and profile photo from the `users` table.
-    - This information is used to display a welcome message and their profile picture in the header.
-
-3.  **Fetching Dashboard Data:**
-    The script runs several SQL queries to get the numbers for the dashboard:
-    - **Summary Stats:** A single, efficient query gets four key numbers:
-        - Total revenue from 'delivered' orders.
-        - The count of 'pending' orders (new orders).
-        - The total number of registered users.
-        - The total number of products in the store.
-    - **Recent Orders:** It fetches the 5 most recent orders to display in a list. It `JOIN`s
-      with the `users` table to get the customer's name for each order.
-    - **Top Customers:** It calculates which customers have spent the most money on 'delivered'
-      orders and fetches the top 5.
-
-4.  **Displaying the Page (HTML & CSS):**
-    - **Layout:** The page is structured with a fixed sidebar on the left and a main content
-      area on the right.
-    - **Header:** A simple header shows a welcome message and a "Logout" button.
-    - **Summary Cards:** The four key stats (Revenue, New Orders, etc.) are displayed in
-      colorful boxes at the top for easy viewing. Each card is a link to a more detailed page.
-    - **Data Panels:** Below the cards, there are two main sections:
-        - A table showing the 5 most recent orders.
-        - A list showing the top 5 customers and how much they've spent.
-
-5.  **Helper Function (`get_avatar`):**
-    - This small PHP function is used to get the correct image path for user avatars.
-    - If a user has uploaded a profile photo, it uses that.
-    - If not, it cleverly uses an external service (ui-avatars.com) to generate a default
-      avatar with the user's initials, which looks very professional.
-
-In short, this page acts as the admin's home base, providing a quick and useful
-overview of the store's current state by fetching and displaying key data from the database.
-
-*/
 ?>
