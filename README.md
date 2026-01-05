@@ -2,7 +2,8 @@
 
 DunzoQuick is a complete web application designed for a delivery or e-commerce business. It features a customer-facing storefront for placing orders and a powerful admin panel for managing the business operations.
 ### User Dashboard
-![User Dashboard](User.png)
+<img width="1892" height="998" alt="User" src="https://github.com/user-attachments/assets/c6694fe6-af20-4d59-8ffd-40f44e065e10" />
+
 
 The **User Dashboard** provides a clean and intuitive interface for customers to manage their account. Key features include:
 - **Order Tracking**: View real-time status updates for active orders.
