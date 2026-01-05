@@ -1,7 +1,21 @@
 # DunzoQuick - E-Commerce Delivery System
 
 DunzoQuick is a complete web application designed for a delivery or e-commerce business. It features a customer-facing storefront for placing orders and a powerful admin panel for managing the business operations.
+### User Dashboard
+![User Dashboard](User.png)
 
+The **User Dashboard** provides a clean and intuitive interface for customers to manage their account. Key features include:
+- **Order Tracking**: View real-time status updates for active orders.
+- **Purchase History**: Access a complete log of past transactions.
+- **Profile Management**: Update personal details and shipping addresses securely.
+
+### Admin Dashboard
+![Admin Dashboard](adminDb.png)
+
+The **Admin Dashboard** serves as the central command center for store operations. It offers:
+- **At-a-Glance Statistics**: Instant visibility into daily revenue, new orders, and total user counts.
+- **Recent Activity**: A quick view of the latest orders requiring attention.
+- **Navigation**: Easy access to product management, user lists, and report generation tools.
 
 ## Features
 
@@ -38,7 +52,3 @@ The frontend interface for customers to browse and purchase items.
 - **Styling**: Custom CSS with variables for easy theming, using 'Poppins' font and FontAwesome icons.
 - **PDF Generation**: Uses `dompdf` and `FPDF` for generating reports and invoices.
 - **Payments**: Integrated `razorpay/razorpay` library for handling transactions.
-
-## Screenshots
-
-![alt text](image.png)
