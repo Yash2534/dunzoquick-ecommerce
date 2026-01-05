@@ -10,7 +10,8 @@ The **User Dashboard** provides a clean and intuitive interface for customers to
 - **Profile Management**: Update personal details and shipping addresses securely.
 
 ### Admin Dashboard
-![Admin Dashboard](adminDb.png)
+<img width="1891" height="1000" alt="adminDb" src="https://github.com/user-attachments/assets/cb35b890-a4e4-4bc6-91cb-ced405f1fcb8" />
+
 
 The **Admin Dashboard** serves as the central command center for store operations. It offers:
 - **At-a-Glance Statistics**: Instant visibility into daily revenue, new orders, and total user counts.
