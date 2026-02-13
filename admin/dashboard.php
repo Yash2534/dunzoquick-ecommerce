@@ -83,7 +83,11 @@ if ($result_top_customers) {
 // Helper function for avatars
 function get_avatar($photo, $name)
 {
-    if ($photo && file_exists('../' . $photo)) { // Check if the file exists relative to the admin folder
+    $photo = trim($photo ?? '');
+    $photo = str_replace('\\', '/', $photo);
+    $photo = ltrim($photo, '/');
+
+    if (!empty($photo) && file_exists(dirname(__DIR__) . '/' . $photo)) {
         return '../' . htmlspecialchars($photo);
     }
     return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=random&color=fff&rounded=true';
