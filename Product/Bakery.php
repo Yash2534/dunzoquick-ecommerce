@@ -27,7 +27,7 @@
         if (strpos($path, 'Image/') !== 0 && strpos($path, 'PICTURE/') !== 0) {
       $path = 'Image/' . $path;
     }
-    return '/DUNZO/' . htmlspecialchars($path);
+    return '/DunzoQuick/' . htmlspecialchars($path);
   }
 
   // Fetch all bakery products from the database
@@ -237,7 +237,7 @@
 <body>
   <?php include 'header.php'; ?>
 
-  <a href="/DUNZO/index.php" class="back-btn">&larr; Back to Home</a>  <!-- Categories -->
+  <a href="/DunzoQuick/index.php" class="back-btn">&larr; Go to Home</a>  <!-- Categories -->
   <ul class="grocery-categories">
     <li onclick="filterCategory('all', this)" class="active">🍿 All</li>
     <li onclick="filterCategory('bread', this)">🍞 Bread</li>
