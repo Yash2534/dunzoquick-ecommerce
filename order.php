@@ -49,7 +49,7 @@ if (!empty($orders)) {
 
 // Helper function to generate a clean, root-relative image path
 function get_image_path($db_path) {
-    $default_image = '/DUNZO/Image/no-image.png';
+    $default_image = '/DunzoQuick/Image/no-image.png';
     if (empty(trim((string)$db_path))) {
         return $default_image;
     }
@@ -64,8 +64,8 @@ function get_image_path($db_path) {
     if (strpos($path, 'Image/') !== 0 && strpos($path, 'PICTURE/') !== 0) {
         $path = 'Image/' . $path;
     }
-    
-    return '/DUNZO/' . htmlspecialchars($path);
+
+    return '/DunzoQuick/' . htmlspecialchars($path);
 }
 
 // Helper function to determine the CSS class for an order status badge
@@ -73,6 +73,7 @@ function get_status_badge($status) {
     switch (strtolower($status)) {
         case 'delivered':
             return 'badge-success';
+
         case 'cancelled':
             return 'badge-danger';
         case 'out_for_delivery':
@@ -81,6 +82,7 @@ function get_status_badge($status) {
         case 'preparing':
             return 'badge-warning';
         case 'pending':
+
         default:
             return 'badge-secondary';
     }
@@ -90,6 +92,7 @@ function get_status_badge($status) {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
 <title>My Orders - DUNZO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -98,6 +101,7 @@ function get_status_badge($status) {
 <style>
 :root {
   --primary: #0ea86f; /* Blinkit green */
+
   --secondary: #20c997; /* Lighter green for gradients/hovers */
   --light: #f8f9fa;
   --dark: #212529;
@@ -132,6 +136,7 @@ function get_status_badge($status) {
 
 body {
   background-color: #f7f8fa; /* Lighter, cleaner background */
+
   font-family: 'Poppins', sans-serif;
   color: var(--gray-800);
 }
@@ -180,6 +185,7 @@ body {
 }
 
 .order-info {
+
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -213,6 +219,7 @@ body {
 .badge-secondary { background-color: #f3f4f6; color: #374151; }
 
 .order-card-body {
+
   padding: 1rem 1.5rem;
 }
 
@@ -354,9 +361,10 @@ body {
       </div>
       <div class="order-card-body">
           <?php if (isset($order_items[$order['id']])): ?>
+
             <?php foreach ($order_items[$order['id']] as $item): ?>
             <div class="order-item">
-              <img src="<?= get_image_path($item['image'] ?? null) ?>" alt="<?= htmlspecialchars($item['product_name']) ?>" class="order-item-image">
+                <img src="<?= get_image_path($item['image'] ?? null) ?>" alt="<?= htmlspecialchars($item['product_name']) ?>" class="order-item-image">
               <div class="item-details">
                 <div class="item-name"><?= htmlspecialchars($item['product_name']) ?></div>
                 <div class="item-qty">Quantity: <?= $item['quantity'] ?></div>
@@ -370,6 +378,7 @@ body {
       </div>
       <div class="order-card-footer">
         <a href="invoice.php?order_id=<?= $order['id'] ?>" class="btn-invoice"><i class="fas fa-file-invoice me-1"></i> View Invoice</a>
+
         <a href="track_order.php?order_number=<?= htmlspecialchars($order['order_number']) ?>" class="btn-track"><i class="fas fa-truck me-1"></i> Track Order</a>
       </div>
     </div>

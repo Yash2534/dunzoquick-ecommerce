@@ -14,7 +14,7 @@ $user_id = $_SESSION['user_id'];
 
 // Helper function to generate a clean, root-relative image path
 function get_image_path($db_path) {
-    $default_image = '/DUNZO/Image/no-image.png';
+    $default_image = '/DunzoQuick/Image/no-image.png';
     if (empty(trim((string)$db_path))) {
         return $default_image;
     }
@@ -24,7 +24,7 @@ function get_image_path($db_path) {
     if (strpos($path, 'Image/') !== 0 && strpos($path, 'PICTURE/') !== 0) {
         $path = 'Image/' . $path;
     }
-        return '/DUNZO/' . htmlspecialchars($path);
+        return '/DunzoQuick/' . htmlspecialchars($path);
 }
 
 // Get user wishlist items

@@ -190,7 +190,6 @@ if ($result = $conn->query($sql)) {
   background: #ddd;
 }
 </style>
-<body>
 
 
     <?php include 'header.php'; ?>
@@ -318,7 +317,6 @@ if ($result = $conn->query($sql)) {
   </script>
 
 </body>
-</html>
   
 </body>
 </html>

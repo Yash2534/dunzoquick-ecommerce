@@ -207,19 +207,19 @@
       <div class="logo">
         <span class="yellow">dun</span><span class="green">zo</span>
       </div>
-      <!-- Search Form -->
-      <form action="/DUNZO/product.php" method="GET" class="search-form">
+
+      <form action="/DunzoQuick/product.php" method="GET" class="search-form">
         <input type="text" name="search" placeholder="Search for products..." value="<?= htmlspecialchars($search_query ?? '') ?>" aria-label="Search products">
         <button type="submit" aria-label="Search"><i class="fas fa-search"></i></button>
       </form>
       <nav class="nav-links">
-        <a href="/DUNZO/index.php" class="nav-link">Home</a>
+        <a href="/DunzoQuick/index.php" class="nav-link">Home</a>
         <div class="dropdown">
           <button class="nav-link dropdown-btn">
             Categories <i class="fas fa-chevron-down"></i>
           </button>
           <div class="dropdown-content">
-            <?php
+              <?php
               // Fetch categories dynamically from the database
               $category_result = $conn->query("SELECT name, link_url FROM categories ORDER BY sort_order, name ASC");
               if ($category_result && $category_result->num_rows > 0) {
@@ -234,7 +234,7 @@
         </div>
       </nav>
       <!-- Wishlist Button -->
-      <a href="/DUNZO/wishlist.php" class="nav-link nav-btn" title="My Wishlist">
+      <a href="/DunzoQuick/wishlist.php" class="nav-link nav-btn" title="My Wishlist">
         <i class="fas fa-heart"></i>
         <span>Wishlist</span>
       </a>
@@ -254,7 +254,7 @@
             $stmt->close();
         }
       ?>
-      <a href="/DUNZO/cart.php" class="cart-btn">
+      <a href="/DunzoQuick/cart.php" class="cart-btn">
         <i class="fas fa-shopping-cart"></i> Cart
         <span class="cart-badge" style="<?= $cart_count > 0 ? 'display: flex;' : 'display: none;' ?>"><?= $cart_count ?></span>
       </a>
