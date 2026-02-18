@@ -12,18 +12,18 @@
 
   // Helper function to generate a clean, root-relative image path
   function get_image_path($db_path) {
-        $default_image = '/DUNZO/Image/no-image.png';
+        $default_image = '/DunzoQuick/Image/no-image.png';
         if (empty(trim((string)$db_path))) {
             return $default_image;
         }
-        $path = preg_replace('#^(\.\./|/DUNZO/|Product/)#', '', (string)$db_path);
+        $path = preg_replace('#^(\.\./|/DunzoQuick/|Product/)#', '', (string)$db_path);
         $path = ltrim($path, '/');
 
     
         if (strpos($path, 'Image/') !== 0 && strpos($path, 'PICTURE/') !== 0) {
           $path = 'Image/' . $path;
       }
-      return '/DUNZO/' . htmlspecialchars($path);
+      return '/DunzoQuick/' . htmlspecialchars($path);
   }
 
   // Fetch all Grocery products from the database
@@ -81,7 +81,7 @@
 
 <body>
     <?php include 'header.php'; ?>
- <a href="/DUNZO/index.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Home</a>
+ <a href="/DunzoQuick/index.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Home</a>
 
   <ul class="grocery-categories">
     <li data-filter="all" class="active" onclick="filterCategory('all', this)">🛒 All</li>
