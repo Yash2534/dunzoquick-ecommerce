@@ -4,8 +4,8 @@ include 'config.php';
 
 
 $tax_rate = 0.09;
-function get_image_path($db_path) {
-    $default_image = '/DUNZO/Image/no-image.png';
+function get_image_path($db_path){
+    $default_image = '/DunzoQuick/Image/no-image.png';
     if (empty(trim((string)$db_path))) {
         return $default_image;
     }
@@ -14,9 +14,9 @@ function get_image_path($db_path) {
 
     if (strpos($path, 'Image/') !== 0 && strpos($path, 'PICTURE/') !== 0) {
         $path = 'Image/' . $path;
-    }
-    
-    return '/DUNZO/' . htmlspecialchars($path);
+    }    
+    return '/DunzoQuick/' . htmlspecialchars($path);
+
 }
 
 if (!function_exists('calculate_shipping_charge')) {
@@ -848,8 +848,8 @@ body {
 </style>
 </head>
 <body>
-   <?php include 'includes/header.php'; ?>
- <a href="/DUNZO/index.php" class="back-btn">&larr; Back to Home</a>
+ <?php include 'includes/header.php'; ?>
+ <a href="index.php" class="back-btn">&larr; Back to Home</a>
 
 <div class="cart-container">
   <div class="cart-header">

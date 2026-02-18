@@ -357,7 +357,7 @@ if (isset($_SESSION['user_id']) && isset($conn)) {
   <nav class="category-nav">
     <div class="category-nav-container">
       <?php foreach ($category_nav_items as $category): ?>
-        <a href="/DUNZO/<?= htmlspecialchars(ltrim($category['link_url'], '/')) ?>" class="category-link">
+        <a href="/DunzoQuick/<?= htmlspecialchars(ltrim($category['link_url'], '/')) ?>" class="category-link">
           <?= htmlspecialchars($category['name']) ?>
         </a>
       <?php endforeach; ?>

@@ -4,7 +4,7 @@ include 'config.php';
 
 // Helper function to generate a clean, root-relative image path
 function get_image_path($db_path) {
-    $default_image = '/DUNZO/Image/no-image.png';
+    $default_image = '/DunzoQuick/Image/no-image.png';
     if (empty(trim((string)$db_path))) {
         return $default_image;
     }
@@ -18,7 +18,7 @@ function get_image_path($db_path) {
         $path = 'Image/' . $path;
     }
     
-    return '/DUNZO/' . htmlspecialchars($path);
+    return '/DunzoQuick/' . htmlspecialchars($path);
 }
 
 // Get location data from session
