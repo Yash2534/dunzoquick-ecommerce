@@ -3,17 +3,19 @@ session_start();
 require_once '../config.php';
 
 // Helper function to generate a clean, root-relative image path
-function get_image_path($db_path) {
-    $default_image = '/DUNZO/Image/no-image.png';
-        if (empty(trim((string)$db_path))) {
-            return $default_image;
-        }
-        $path = preg_replace('#^(\.\./|/DUNZO/|Product/)#', '', (string)$db_path);
+function get_image_path($db_path)
+{
+  $default_image = '/DunzoQuick/Image/no-image.png';
+  if (empty(trim((string)$db_path))) {
+    return $default_image;
+  }
+  $path = preg_replace('#^(\.\./|/DUNZO/|Product/)#', '', (string)$db_path);
     $path = ltrim($path, '/');
-      if (strpos($path, 'Image/') !== 0 && strpos($path, 'PICTURE/') !== 0) {
-        $path = 'Image/' . $path;
+
+  if (strpos($path, 'Image/') !== 0 && strpos($path, 'PICTURE/') !== 0) {
+    $path = 'Image/' . $path;
     }
-    return '/DUNZO/' . htmlspecialchars($path);
+  return '/DunzoQuick/' . htmlspecialchars($path);
 }
 
 // Fetch cosmetic products from the database
@@ -193,7 +195,7 @@ if ($result = $conn->query($sql)) {
 
     <?php include 'header.php'; ?>
 
-  <a href="/DUNZO/index.php" class="back-btn">&larr; Back to Home</a>
+  <a href="/DunzoQuick/index.php" class="back-btn">&larr; Go to Home</a>
 
   <ul class="grocery-categories">
     <li onclick="filterCategory('all', this)" class="active">🍿 All</li>
@@ -314,6 +316,9 @@ if ($result = $conn->query($sql)) {
       }, 3000);
     }
   </script>
+
+</body>
+</html>
   
 </body>
 </html>
