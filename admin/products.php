@@ -20,6 +20,25 @@ function get_avatar($photo, $name) {
     return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=random&color=fff&rounded=true';
 }
 
+// Helper function to generate a clean, relative image path for the admin area
+function get_product_image_path($db_path) {
+    $placeholder = 'https://via.placeholder.com/50';
+    if (empty(trim((string)$db_path))) {
+        return $placeholder;
+    }
+
+    // Clean up known incorrect prefixes to get just the filename
+    $filename = preg_replace('#^(\.\./|/DUNZO/|/DunzoQuick/|Product/|Image/|PICTURE/)#', '', (string)$db_path);
+    $filename = ltrim($filename, '/');
+
+    if (empty($filename)) {
+        return $placeholder;
+    }
+
+    // Return the relative path from the 'admin' directory
+    return '../Image/' . htmlspecialchars($filename);
+}
+
 // Handle Stock Updates
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_stock'])) {
@@ -193,7 +212,7 @@ if ($result) {
                             <tr>
                                 <td>
                                     <div class="product-info">
-                                    <img src="<?= !empty($p['image']) ? '../Image/' . htmlspecialchars($p['image']) : 'https://via.placeholder.com/50' ?>" alt="Product">
+                                    <img src="<?= get_product_image_path($p['image']) ?>" alt="Product">
                                         <div>
                                             <div class="product-name"><?= htmlspecialchars($p['name']) ?></div>
                                             <div class="product-id">ID: <?= $p['id'] ?></div>
