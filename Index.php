@@ -66,6 +66,152 @@ $location_updated = isset($_GET['location']) && $_GET['location'] === 'updated';
 
     <!-- Use new CSS file -->
     <link rel="stylesheet" href="index.css">
+    <style>
+        /* Modern Stores Section Styles */
+        .nearby-stores {
+            padding: 40px 5%;
+            background: #f7faff;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #171e30;
+            margin: 0;
+        }
+        .sort-container select {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .store-card-new {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            border: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+        }
+        .store-card-new:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .store-image-container {
+            position: relative;
+            height: 160px;
+            overflow: hidden;
+        }
+        .store-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .store-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+        .badge-open { background: #e6fffa; color: #00b37a; }
+        .badge-closed { background: #fff5f5; color: #e53e3e; }
+        .store-details {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .store-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .store-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 12px;
+        }
+        .store-rating {
+            background: #24963e;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .store-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #4a5568;
+        }
+        .info-item { display: flex; align-items: center; gap: 6px; }
+        .info-item i { color: #00d290; width: 16px; text-align: center; }
+        .view-btn {
+            margin-top: auto;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #f0fff4;
+            color: #00b37a;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid #c6f6d5;
+        }
+        .view-btn:hover { background: #00b37a; color: white; }
+        .view-btn.disabled {
+            background: #edf2f7;
+            color: #a0aec0;
+            border-color: #e2e8f0;
+            pointer-events: none;
+        }
+        @media (max-width: 768px) {
+            .store-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+        }
+        @media (max-width: 480px) {
+            .store-grid { grid-template-columns: 1fr; }
+        }
+    </style>
    </head>
 
 <body>
@@ -209,32 +355,69 @@ $location_updated = isset($_GET['location']) && $_GET['location'] === 'updated';
 
     <!-- Stores Near You -->
     <section class="nearby-stores">
-        <h2>🛒 Stores Near You</h2>
-        <div class="store-list">
+        <div class="section-header">
+            <h2>🛒 Stores Near You</h2>
+            <div class="sort-container">
+                <select id="storeSort" onchange="sortStores()">
+                    <option value="default">Sort By</option>
+                    <option value="rating">Rating: High to Low</option>
+                    <option value="time">Delivery Time: Fastest</option>
+                    <option value="distance">Distance: Nearest</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="store-grid" id="storeGrid">
             <?php
             $stores = [
-    ["img" => "Image/PICTURE/71.jpg", "name" => "Fresh Mart", "type" => "Groceries & Essentials", "status" => "✔ Open", "distance" => "1.2 km", "link" => "product/Grocery.php"],
-    ["img" => "Image/PICTURE/72.jpg", "name" => "Daily Needs", "type" => "Pharmacy & Health", "status" => "🟢 Open 24 Hours", "distance" => "0.8 km", "link" => "product/Pharmacy.php"],
-    ["img" => "Image/PICTURE/73.jpg", "name" => "Snacky Station", "type" => "Snacks, Beverages", "status" => "✔ Open", "distance" => "2.0 km", "link" => "product/SnackZone.php"],
-    ["img" => "Image/PICTURE/74.jpeg", "name" => "Tech Express", "type" => "Mobiles & Gadgets", "status" => "✔ Open", "distance" => "3.5 km", "link" => "product/Electronics.php"],
-    ["img" => "Image/PICTURE/75.jpeg", "name" => "Green Basket", "type" => "Organic & Fresh", "status" => "❌ Closed", "distance" => "2.8 km", "link" => "store.php?id=5", "closed" => true],
-];
+                ["id" => 1, "name" => "Fresh Mart", "image" => "Image/PICTURE/71.jpg", "location" => "Civil Lines", "distance" => 1.2, "time" => 15, "rating" => 4.8, "reviews" => "1.2k", "fee" => 0, "status" => "Open", "link" => "product/Grocery.php", "tags" => "Groceries"],
+                ["id" => 2, "name" => "Daily Needs Pharmacy", "image" => "Image/PICTURE/72.jpg", "location" => "Market Road", "distance" => 0.8, "time" => 10, "rating" => 4.5, "reviews" => "850", "fee" => 20, "status" => "Open", "link" => "product/Pharmacy.php", "tags" => "Pharmacy"],
+                ["id" => 3, "name" => "Snacky Station", "image" => "Image/PICTURE/73.jpg", "location" => "University Area", "distance" => 2.5, "time" => 25, "rating" => 4.2, "reviews" => "500+", "fee" => 0, "status" => "Open", "link" => "product/SnackZone.php", "tags" => "Snacks"],
+                ["id" => 4, "name" => "Tech Express", "image" => "Image/PICTURE/74.jpeg", "location" => "Tech Park", "distance" => 3.5, "time" => 30, "rating" => 4.9, "reviews" => "2k+", "fee" => 0, "status" => "Open", "link" => "product/Electronics.php", "tags" => "Electronics"],
+                ["id" => 5, "name" => "Green Basket Organic", "image" => "Image/PICTURE/75.jpeg", "location" => "Green Valley", "distance" => 2.8, "time" => 35, "rating" => 4.6, "reviews" => "300", "fee" => 25, "status" => "Closed", "link" => "#", "tags" => "Organic"],
+                ["id" => 6, "name" => "Pet Paradise", "image" => "Image/PICTURE/Pet Care.jpg", "location" => "West End", "distance" => 4.0, "time" => 40, "rating" => 4.7, "reviews" => "150", "fee" => 30, "status" => "Open", "link" => "product/Pet.php", "tags" => "Pet Care"],
+                ["id" => 7, "name" => "Cool Sips Beverages", "image" => "Image/PICTURE/Drinks.jpg", "location" => "North Avenue", "distance" => 1.5, "time" => 20, "rating" => 4.3, "reviews" => "400", "fee" => 15, "status" => "Open", "link" => "product/CoolSips.php", "tags" => "Beverages"],
+                ["id" => 8, "name" => "Oven Fresh Bakery", "image" => "Image/PICTURE/Bakery.jpg", "location" => "Central Plaza", "distance" => 0.5, "time" => 12, "rating" => 4.9, "reviews" => "1.5k", "fee" => 0, "status" => "Open", "link" => "product/Bakery.php", "tags" => "Bakery"]
+            ];
 
-        
             foreach ($stores as $store) {
-                echo "<div class='store-card'>
-                        <img src='{$store['img']}' alt='{$store['name']}'>
-                        <div class='store-info'>
-                            <h3>{$store['name']}</h3>
-                            <p>{$store['type']}</p>
-                            <span class='status " . (isset($store['closed']) ? "closed" : "open") . "'>{$store['status']}</span>
-                            <span class='distance'>{$store['distance']} away</span>";
-                if (isset($store['closed'])) {
-                    echo "<a href='{$store['link']}' class='store-btn disabled' disabled>Closed</a>";
-                } else {
-                    echo "<a href='{$store['link']}' class='store-btn'>View Store</a>";
-                }
-                echo "</div></div>";
+                $isOpen = $store['status'] === 'Open';
+                $badgeClass = $isOpen ? 'badge-open' : 'badge-closed';
+                $btnClass = $isOpen ? '' : 'disabled';
+                $btnText = $isOpen ? 'View Store' : 'Closed Now';
+                $feeText = $store['fee'] == 0 ? 'Free Delivery' : '₹' . $store['fee'] . ' Delivery';
+                
+                echo "
+                <div class='store-card-new' data-rating='{$store['rating']}' data-time='{$store['time']}' data-distance='{$store['distance']}'>
+                    <div class='store-image-container'>
+                        <span class='store-badge {$badgeClass}'>{$store['status']}</span>
+                        <img src='{$store['image']}' alt='{$store['name']}' loading='lazy'>
+                    </div>
+                    <div class='store-details'>
+                        <div class='store-name'>{$store['name']}</div>
+                        <div class='store-meta'>
+                            <span>{$store['tags']}</span>
+                            <span>•</span>
+                            <span>{$store['location']}</span>
+                        </div>
+                        <div class='store-info-grid'>
+                            <div class='info-item'>
+                                <span class='store-rating'>{$store['rating']} <i class='fas fa-star' style='color:white; width:auto;'></i></span>
+                                <span style='font-size:11px; color:#a0aec0;'>({$store['reviews']})</span>
+                            </div>
+                            <div class='info-item'>
+                                <i class='fas fa-clock'></i> {$store['time']} mins
+                            </div>
+                            <div class='info-item'>
+                                <i class='fas fa-map-marker-alt'></i> {$store['distance']} km
+                            </div>
+                            <div class='info-item'>
+                                <i class='fas fa-motorcycle'></i> {$feeText}
+                            </div>
+                        </div>
+                        <a href='{$store['link']}' class='view-btn {$btnClass}'>{$btnText}</a>
+                    </div>
+                </div>";
             }
             ?>
         </div>
@@ -465,6 +648,27 @@ $location_updated = isset($_GET['location']) && $_GET['location'] === 'updated';
                     if (toast.parentNode) toast.parentNode.removeChild(toast);
                 }, 500); // Match CSS transition duration
             }
+        }
+        
+        // Store Sorting Function
+        function sortStores() {
+            const grid = document.getElementById('storeGrid');
+            const sortValue = document.getElementById('storeSort').value;
+            const cards = Array.from(grid.getElementsByClassName('store-card-new'));
+
+            cards.sort((a, b) => {
+                switch(sortValue) {
+                    case 'rating':
+                        return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
+                    case 'time':
+                        return parseInt(a.dataset.time) - parseInt(b.dataset.time);
+                    case 'distance':
+                        return parseFloat(a.dataset.distance) - parseFloat(b.dataset.distance);
+                    default:
+                        return 0;
+                }
+            });
+            cards.forEach(card => grid.appendChild(card));
         }
 
     </script>
