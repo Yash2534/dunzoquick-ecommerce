@@ -382,12 +382,8 @@ if ($stmt_products) {
                             <a class="page-link" href="<?= ($page <= 1) ? '#' : '?page='.($page - 1).'&search='.urlencode($search_query) ?>">Previous</a>
                         </li>
 
-                        <!-- Page Numbers -->
-                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
-                                <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search_query) ?>"><?= $i ?></a>
-                            </li>
-                        <?php endfor; ?>
+                        <!-- Page Indicator -->
+                        <li class="page-item disabled"><span class="page-link text-muted">Page <?= $page ?> of <?= $total_pages ?></span></li>
 
                         <!-- Next Page -->
                         <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
