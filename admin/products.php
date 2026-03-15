@@ -2,47 +2,23 @@
 include 'auth_check.php';
 include 'db_connect.php';
 
-// Fetch current admin details for header
-$admin_id = $_SESSION['admin_id'] ?? 0;
-$current_admin = null;
-if ($admin_id > 0) {
-    $stmt_admin = $conn->prepare("SELECT full_name, profile_photo FROM users WHERE id = ?");
-    $stmt_admin->bind_param("i", $admin_id);
-    $stmt_admin->execute();
-    $current_admin = $stmt_admin->get_result()->fetch_assoc();
-    $stmt_admin->close();
-}
-
-function get_avatar($photo, $name) {
-    if ($photo && file_exists('../' . $photo)) {
-        return '../' . htmlspecialchars($photo);
-    }
-    return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=random&color=fff&rounded=true';
-}
-
 // Helper function to generate a clean, relative image path for the admin area
 function get_product_image_path($db_path) {
-    $path = trim((string)$db_path);
-    if (empty($path)) return 'https://via.placeholder.com/50';
-
-    // 1. Clean up known incorrect prefixes (matching index.php logic)
-    $path = preg_replace('#^(\.\./|/DUNZO/|/DunzoQuick/|Product/)#i', '', $path);
-    $path = ltrim($path, '/');
-
-    // 2. Ensure path points to Image/ or PICTURE/
-    if (stripos($path, 'Image/') !== 0 && stripos($path, 'PICTURE/') !== 0) {
-        $path = 'Image/' . $path;
+    $placeholder = 'https://via.placeholder.com/50';
+    if (empty(trim((string)$db_path))) {
+        return $placeholder;
     }
 
-    // 3. Admin is in a subfolder, so prepend ../
-    $full_path = '../' . $path;
+    // Clean up known incorrect prefixes to get just the filename
+    $filename = preg_replace('#^(\.\./|/DUNZO/|/DunzoQuick/|Product/|Image/|PICTURE/)#', '', (string)$db_path);
+    $filename = ltrim($filename, '/');
 
-    // Return path if it exists, otherwise fallback or placeholder
-    if (file_exists($full_path)) {
-        return htmlspecialchars($full_path);
+    if (empty($filename)) {
+        return $placeholder;
     }
-    
-    return 'https://via.placeholder.com/50';
+
+    // Return the relative path from the 'admin' directory
+    return '../Image/' . htmlspecialchars($filename);
 }
 
 // Handle Stock Updates
@@ -92,78 +68,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_stock'])) {
     }
 }
 
-// Handle Product Deletion
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_product'])) {
-    $product_id = intval($_POST['product_id']);
-    if ($product_id > 0) {
-        // Note: For a complete solution, you might want to delete the associated image file from the server.
-        $stmt_del = $conn->prepare("DELETE FROM products WHERE id = ?");
-        if ($stmt_del) {
-            $stmt_del->bind_param("i", $product_id);
-            if ($stmt_del->execute()) {
-                $msg = '<div class="alert alert-success">Product deleted successfully.</div>';
-            } else {
-                $msg = '<div class="alert alert-danger">Failed to delete product.</div>';
-            }
-            $stmt_del->close();
-        }
-    }
-}
-
-// --- Search and Pagination ---
-$search_query = $_GET['search'] ?? '';
+// --- Search and Pagination Logic ---
+$limit = 10; // Number of products per page
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
-$limit = 10; // Products per page
+$offset = ($page - 1) * $limit;
 
-// Build WHERE clause for search
-$where_clause = '';
+$search_query = $_GET['search'] ?? '';
+$where_sql = '';
 $params = [];
 $types = '';
+
 if (!empty($search_query)) {
-    $where_clause = " WHERE name LIKE ?";
+    $where_sql = "WHERE name LIKE ?";
     $search_param = '%' . $search_query . '%';
     $params[] = $search_param;
     $types .= 's';
 }
 
-// Get total records for pagination
-$count_sql = "SELECT COUNT(id) as total FROM products" . $where_clause;
+// 1. Get total records count for pagination
+$count_sql = "SELECT COUNT(*) as total FROM products $where_sql";
 $stmt_count = $conn->prepare($count_sql);
-if ($stmt_count) {
-    if (!empty($types)) {
-        $stmt_count->bind_param($types, ...$params);
-    }
-    $stmt_count->execute();
-    $total_records = $stmt_count->get_result()->fetch_assoc()['total'] ?? 0;
-    $stmt_count->close();
-} else {
-    $total_records = 0;
+if (!empty($types)) {
+    $stmt_count->bind_param($types, ...$params);
 }
-
+$stmt_count->execute();
+$total_records = $stmt_count->get_result()->fetch_assoc()['total'] ?? 0;
 $total_pages = $total_records > 0 ? ceil($total_records / $limit) : 1;
-if ($page > $total_pages) {
-    $page = $total_pages;
-}
-$offset = ($page - 1) * $limit;
+if ($page > $total_pages) $page = $total_pages;
 
-// Fetch Products for the current page
+// 2. Fetch Products with Limit and Offset
 $products = [];
-$sql = "SELECT * FROM products" . $where_clause . " ORDER BY id DESC LIMIT ? OFFSET ?";
+$sql = "SELECT * FROM products $where_sql ORDER BY id DESC LIMIT ? OFFSET ?";
 
-$stmt_products = $conn->prepare($sql);
-if ($stmt_products) {
-    if (!empty($search_query)) {
-        $stmt_products->bind_param('sii', $search_param, $limit, $offset);
-    } else {
-        $stmt_products->bind_param('ii', $limit, $offset);
-    }
-    $stmt_products->execute();
-    $result = $stmt_products->get_result();
-    if ($result) {
-        $products = $result->fetch_all(MYSQLI_ASSOC);
-    }
-    $stmt_products->close();
+// Add limit and offset to parameters
+$params[] = $limit;
+$params[] = $offset;
+$types .= 'ii';
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param($types, ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result) {
+    $products = $result->fetch_all(MYSQLI_ASSOC);
 }
 ?>
 <!DOCTYPE html>
@@ -205,22 +153,13 @@ if ($stmt_products) {
         .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 30px; }
 
         .panel { background-color: var(--card-bg); padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow); }
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
         .panel-header h3 { font-size: 18px; font-weight: 600; }
-        .header-actions { display: flex; align-items: center; gap: 15px; }
-        .search-form { position: relative; }
-        .search-form input { padding: 8px 15px 8px 35px; border: 1px solid var(--border-color); border-radius: 6px; width: 250px; font-family: inherit; transition: all 0.2s ease; }
-        .search-form input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2); }
-        .search-form button { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; }
+
+        .search-form { display: flex; gap: 10px; }
+        .search-form input { padding: 8px 15px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; }
+        .search-form button { padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; }
+        .btn-add-product { background-color: var(--success); color: white; text-decoration: none; padding: 8px 15px; border-radius: 6px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
         
         .data-table { width: 100%; border-collapse: collapse; }
         .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
@@ -236,17 +175,6 @@ if ($stmt_products) {
         .badge-success { background-color: rgba(26, 188, 156, 0.15); color: var(--success); }
         .badge-warning { background-color: rgba(241, 196, 15, 0.15); color: var(--warning); }
         .badge-danger { background-color: rgba(231, 76, 60, 0.15); color: var(--danger); }
-
-        .actions-cell { display: flex; align-items: center; gap: 8px; }
-        .btn-action { width: 32px; height: 32px; border-radius: 6px; border: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; color: white; text-decoration: none; }
-        .btn-edit { background-color: var(--info); }
-        .btn-edit:hover { background-color: #2980b9; }
-        .btn-delete { background-color: var(--danger); }
-        .btn-delete:hover { background-color: #c0392b; }
-
-        .btn-primary { background-color: var(--primary); color: white; padding: 8px 15px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 500; transition: background-color 0.2s ease; }
-        .btn-primary:hover { background-color: #3a53c4; }
-        .btn-primary i { font-size: 14px; }
 
         .stock-form { display: flex; align-items: center; gap: 8px; }
         .stock-input { width: 70px; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; text-align: center; font-family: inherit; }
@@ -293,14 +221,12 @@ if ($stmt_products) {
         <div class="panel">
             <div class="panel-header">
                 <h3>Product Stock Management</h3>
-                <div class="header-actions">
-                    <form action="" method="GET" class="search-form">
+                <div class="d-flex gap-3">
+                    <form method="GET" class="search-form">
+                        <input type="text" name="search" placeholder="Search product..." value="<?= htmlspecialchars($search_query) ?>">
                         <button type="submit"><i class="fas fa-search"></i></button>
-                        <input type="text" name="search" placeholder="Search products..." value="<?= htmlspecialchars($search_query) ?>">
                     </form>
-                    <a href="product-edit.php" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Product
-                    </a>
+                    <a href="add_product.php" class="btn-add-product"><i class="fas fa-plus"></i> Add Product</a>
                 </div>
             </div>
             <table class="data-table">
@@ -336,26 +262,17 @@ if ($stmt_products) {
                                         <?= $p['stock_quantity'] ?> Units
                                     </span>
                                 </td>
-                                <td class="actions-cell">
+                                <td>
                                     <form method="POST" class="stock-form">
                                         <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
-                                        <input type="hidden" name="update_stock" value="1">
                                         <input type="number" name="quantity" value="1" min="1" class="stock-input" required>
-                                        <button type="submit" name="action_type" value="add" class="btn-stock btn-add" title="Add Stock">
+                                        <button type="submit" name="update_stock" value="1" onclick="this.form.action_type.value='add'" class="btn-stock btn-add" title="Add Stock">
                                             <i class="fas fa-plus"></i>
                                         </button>
-                                        <button type="submit" name="action_type" value="remove" class="btn-stock btn-remove" title="Remove Stock">
+                                        <button type="submit" name="update_stock" value="1" onclick="this.form.action_type.value='remove'" class="btn-stock btn-remove" title="Remove Stock">
                                             <i class="fas fa-minus"></i>
                                         </button>
-                                    </form>
-                                    <a href="product-edit.php?id=<?= $p['id'] ?>" class="btn-action btn-edit" title="Edit Product">
-                                        <i class="fas fa-pencil-alt"></i>
-                                    </a>
-                                    <form method="POST" class="delete-form" style="display: inline-block;">
-                                        <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
-                                        <button type="submit" name="delete_product" value="1" class="btn-action btn-delete" title="Delete Product">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
+                                        <input type="hidden" name="action_type" value="add">
                                     </form>
                                 </td>
                             </tr>
@@ -367,59 +284,28 @@ if ($stmt_products) {
                     <?php endif; ?>
                 </tbody>
             </table>
-            <!-- Pagination -->
-            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+
+            <!-- Pagination: Shows only Previous and Next buttons -->
+            <?php if ($total_pages > 1): ?>
+            <nav class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                 <div class="text-muted small">
-                    <?php if ($total_records > 0): ?>
-                        Showing <?= $offset + 1 ?> to <?= min($offset + $limit, $total_records) ?> of <?= $total_records ?> results
-                    <?php endif; ?>
+                    Showing page <?= $page ?> of <?= $total_pages ?>
                 </div>
-                <?php if ($total_pages > 1): ?>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination mb-0">
-                        <!-- Previous Page -->
-                        <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                            <a class="page-link" href="<?= ($page <= 1) ? '#' : '?page='.($page - 1).'&search='.urlencode($search_query) ?>">Previous</a>
-                        </li>
-
-                        <!-- Page Indicator -->
-                        <li class="page-item disabled"><span class="page-link text-muted">Page <?= $page ?> of <?= $total_pages ?></span></li>
-
-                        <!-- Next Page -->
-                        <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-                            <a class="page-link" href="<?= ($page >= $total_pages) ? '#' : '?page='.($page + 1).'&search='.urlencode($search_query) ?>">Next</a>
-                        </li>
-                    </ul>
-                </nav>
-                <?php endif; ?>
-            </div>
+                <ul class="pagination mb-0">
+                    <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>"><a class="page-link" href="?page=<?= $page - 1 ?>&search=<?= urlencode($search_query) ?>">Previous</a></li>
+                    <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>"><a class="page-link" href="?page=<?= $page + 1 ?>&search=<?= urlencode($search_query) ?>">Next</a></li>
+                </ul>
+            </nav>
+            <?php endif; ?>
         </div>
     </div>
 <script>
-    // Dropdown toggle for header user profile
-    const userProfile = document.querySelector('.user-profile-dropdown .user-profile');
-    if (userProfile) {
-        userProfile.addEventListener('click', function(e) {
-            e.stopPropagation();
-            this.parentElement.classList.toggle('open');
-        });
-    }
-
     // Close dropdown when clicking outside
     window.addEventListener('click', function(e) {
         const dropdown = document.querySelector('.user-profile-dropdown');
         if (dropdown && dropdown.classList.contains('open') && !dropdown.contains(e.target)) {
             dropdown.classList.remove('open');
         }
-    });
-
-    // Confirmation for product deletion
-    document.querySelectorAll('.delete-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-                e.preventDefault();
-            }
-        });
     });
 </script>
 </body>

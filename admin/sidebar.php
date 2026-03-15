@@ -6,7 +6,7 @@
         <?php $activePage = basename($_SERVER['PHP_SELF']); ?>
         <li><a href="dashboard.php" class="<?= ($activePage == 'dashboard.php') ? 'active' : '' ?>"><i class="fas fa-tachometer-alt fa-fw"></i> <span>Dashboard</span></a></li>
         <li><a href="orders.php" class="<?= ($activePage == 'orders.php') ? 'active' : '' ?>"><i class="fas fa-shopping-bag fa-fw"></i> <span>Orders</span></a></li>
-        <li><a href="products.php" class="<?= in_array($activePage, ['products.php', 'add_product.php', 'edit_product.php', 'view_product.php']) ? 'active' : '' ?>"><i class="fas fa-box-open fa-fw"></i> <span>Products</span></a></li>
+        <li><a href="products.php" class="<?= in_array($activePage, ['products.php', 'product-edit.php']) ? 'active' : '' ?>"><i class="fas fa-box-open fa-fw"></i> <span>Products</span></a></li>
         <li><a href="coupons.php" class="<?= ($activePage == 'coupons.php') ? 'active' : '' ?>"><i class="fas fa-tags fa-fw"></i> <span>Coupons</span></a></li>
         <li><a href="User.php" class="<?= in_array($activePage, ['User.php', 'view_user.php', 'add_user.php', 'edit_user.php']) ? 'active' : '' ?>"><i class="fas fa-users fa-fw"></i> <span>Customers</span></a></li>
         <li><a href="analytics.php" class="<?= ($activePage == 'analytics.php') ? 'active' : '' ?>"><i class="fas fa-chart-bar fa-fw"></i> <span>Analytics</span></a></li>
