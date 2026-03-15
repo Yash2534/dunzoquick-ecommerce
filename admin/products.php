@@ -22,20 +22,27 @@ function get_avatar($photo, $name) {
 
 // Helper function to generate a clean, relative image path for the admin area
 function get_product_image_path($db_path) {
-    $placeholder = 'https://via.placeholder.com/50';
-    if (empty(trim((string)$db_path))) {
-        return $placeholder;
+    $path = trim((string)$db_path);
+    if (empty($path)) return 'https://via.placeholder.com/50';
+
+    // 1. Clean up known incorrect prefixes (matching index.php logic)
+    $path = preg_replace('#^(\.\./|/DUNZO/|/DunzoQuick/|Product/)#i', '', $path);
+    $path = ltrim($path, '/');
+
+    // 2. Ensure path points to Image/ or PICTURE/
+    if (stripos($path, 'Image/') !== 0 && stripos($path, 'PICTURE/') !== 0) {
+        $path = 'Image/' . $path;
     }
 
-    // Clean up known incorrect prefixes to get just the filename
-    $filename = basename((string)$db_path);
+    // 3. Admin is in a subfolder, so prepend ../
+    $full_path = '../' . $path;
 
-    if (empty($filename)) {
-        return $placeholder;
+    // Return path if it exists, otherwise fallback or placeholder
+    if (file_exists($full_path)) {
+        return htmlspecialchars($full_path);
     }
-
-    // Return the relative path from the 'admin' directory
-    return '../Image/' . htmlspecialchars($filename);
+    
+    return 'https://via.placeholder.com/50';
 }
 
 // Handle Stock Updates
@@ -361,31 +368,33 @@ if ($stmt_products) {
                 </tbody>
             </table>
             <!-- Pagination -->
-            <div class="pagination-container" style="padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                <div class="pagination-summary" style="font-size: 14px; color: var(--text-muted);">
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                <div class="text-muted small">
                     <?php if ($total_records > 0): ?>
                         Showing <?= $offset + 1 ?> to <?= min($offset + $limit, $total_records) ?> of <?= $total_records ?> results
                     <?php endif; ?>
                 </div>
                 <?php if ($total_pages > 1): ?>
-                <ul class="pagination" style="list-style: none; display: flex; gap: 5px; padding: 0; margin: 0;">
-                    <!-- Previous Page -->
-                    <li class="<?= ($page <= 1) ? 'disabled' : '' ?>">
-                        <a href="<?= ($page <= 1) ? '#' : '?page='.($page - 1).'&search='.urlencode($search_query) ?>" style="display: block; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; text-decoration: none; color: var(--text-muted); font-weight: 500;">Prev</a>
-                    </li>
-
-                    <!-- Page Numbers (simplified) -->
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <li class="<?= ($page == $i) ? 'active' : '' ?>">
-                            <a href="?page=<?= $i ?>&search=<?= urlencode($search_query) ?>" style="display: block; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; text-decoration: none; color: <?= ($page == $i) ? 'white' : 'var(--text-muted)' ?>; background-color: <?= ($page == $i) ? 'var(--primary)' : 'transparent' ?>; font-weight: 500;"><?= $i ?></a>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination mb-0">
+                        <!-- Previous Page -->
+                        <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= ($page <= 1) ? '#' : '?page='.($page - 1).'&search='.urlencode($search_query) ?>">Previous</a>
                         </li>
-                    <?php endfor; ?>
 
-                    <!-- Next Page -->
-                    <li class="<?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-                        <a href="<?= ($page >= $total_pages) ? '#' : '?page='.($page + 1).'&search='.urlencode($search_query) ?>" style="display: block; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; text-decoration: none; color: var(--text-muted); font-weight: 500;">Next</a>
-                    </li>
-                </ul>
+                        <!-- Page Numbers -->
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
+                                <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search_query) ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <!-- Next Page -->
+                        <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= ($page >= $total_pages) ? '#' : '?page='.($page + 1).'&search='.urlencode($search_query) ?>">Next</a>
+                        </li>
+                    </ul>
+                </nav>
                 <?php endif; ?>
             </div>
         </div>
